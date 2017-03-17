@@ -22,4 +22,6 @@ class MovieRegisterViewController: UIViewController {
     @IBAction func addUpdateMovie(_ sender: UIButton) {
     }
     
+    
+    
 }
