@@ -83,13 +83,14 @@ class MoviesTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         // return 0 //dataSource.count
         if let count = fetchedResultController.fetchedObjects?.count {
-            tableView.backgroundView = nil // removendo o Sem Filmes
+            tableView.backgroundView = (count == 0) ? label : nil
             return count
         } else {
             tableView.backgroundView = label
             return 0
         }
     }
+    
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "movieCell", for: indexPath) as! MovieTableViewCell
