@@ -7,8 +7,14 @@
 //
 
 import UIKit
+import CoreData
 
 class MoviesTableViewController: UITableViewController {
+    
+    // var fetchedResultController: NSFetchedResultsController!
+    // responsável por efetuar a "busca" no banco
+    // Devemos informar qual tipo de entidade, pois é genérico
+    var fetchedResultController: NSFetchedResultsController<Movie>!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +34,8 @@ class MoviesTableViewController: UITableViewController {
         label.textColor = .white
         
         tableView.backgroundView = label
+        
+        loadMovies()
     }
 
     override func didReceiveMemoryWarning() {
@@ -40,6 +48,26 @@ class MoviesTableViewController: UITableViewController {
     
     // MAKK: - Methods
     
+    func loadMovies() {
+        // Criar request
+        let fetchRequest : NSFetchRequest<Movie> = Movie.fetchRequest()
+        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        fetchedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil) // nao vamos usar os 2 ultimos, kind of advanced heheheh
+        
+        // **
+        fetchedResultController.delegate = self // vamos implementar esse protocolo
+        
+        // Let's execute this request
+        do {
+            try fetchedResultController.performFetch() // todos os resultados ficam aqui, ele é o datasource agora
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        // tá mas como sabemos quando terminou?? delegatessss**
+    }
     
     // MARK: - Table view data source
 
@@ -50,18 +78,25 @@ class MoviesTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0 //dataSource.count
+        // return 0 //dataSource.count
+        if let count = fetchedResultController.fetchedObjects?.count {
+            return count
+        } else {
+            return 0
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "movieCell", for: indexPath) as! MovieTableViewCell
 
-        /*
-        cell.ivPoster.image = UIImage(named: dataSource[indexPath.row].imageSmall)
-        cell.lbTitle.text = dataSource[indexPath.row].title
-        cell.lbRating.text = "\(dataSource[indexPath.row].rating)"
-        cell.lbSummary.text = dataSource[indexPath.row].summary
-        */
+        // Preparar table
+        // fetchedResultController é o datasource agora
+        let movie = fetchedResultController.object(at: indexPath)
+        
+        // Agora vamos alimentar a celula
+        cell.lbRating.text = "\(movie.rating)"
+        cell.lbTitle.text = movie.title
+        cell.lbSummary.text = movie.summary
         
         return cell
     }
@@ -112,3 +147,15 @@ class MoviesTableViewController: UITableViewController {
     */
 
 }
+
+extension MoviesTableViewController: NSFetchedResultsControllerDelegate {
+    // disparado toda vez que modifica o conteúdo interno, que é o que faz quando termina o fetch
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.reloadData()
+    }
+}
+
+
+
+
+

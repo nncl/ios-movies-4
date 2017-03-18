@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -40,6 +41,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+    
+    // MARK: - Core Data Stack
+    // lazy - instanciada somente quando é utilizada
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "MoviesLib")
+        
+        // Carregar a persistStore
+        // Vai vincular
+        container.loadPersistentStores(completionHandler: { (storeDescription: NSPersistentStoreDescription, error: Error?) in
+            
+            /*
+            if let error = error as? NSError {
+                // Não conseguiu acessar
+                // Não usar o método fatalError pq quando cai nele ele fecha o app :(
+            }*/
+        })
+        
+        return container
+    }()
 
 
 }
