@@ -16,8 +16,17 @@ class MovieRegisterViewController: UIViewController {
     // MARK: - Functions
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        if movie != nil {
+            tfTitle.text = movie.title
+            tfScore.text = "\(movie.rating)"
+            tfDuration.text = movie.duration
+            tvSummary.text = movie.summary
+            
+            btAddUpdate.setTitle("Atualizar", for: .normal)
         }
+
+    }
 
     @IBAction func close(_ sender: UIButton?) {
         dismiss(animated: true, completion: nil)

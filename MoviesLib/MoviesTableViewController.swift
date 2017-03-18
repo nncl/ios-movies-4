@@ -43,7 +43,11 @@ class MoviesTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    // Ocorre antes de carregar
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? MovieViewController {
+            vc.movie = fetchedResultController.object(at: tableView.indexPathForSelectedRow!)
+        }
     }
     
     // MAKK: - Methods
